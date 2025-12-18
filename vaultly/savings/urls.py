@@ -1,10 +1,12 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import SavingPlanViewSet
+from .views import SavingPlanViewSet, ContributionViewSet
 
 router = DefaultRouter()
 router.register(r'saving-plans', SavingPlanViewSet)
+router.register(r'contributions', ContributionViewSet)
+
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
 ]
