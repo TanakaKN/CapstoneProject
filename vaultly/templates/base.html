@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vaultly</title>
+</head>
+<body>
+
+<nav>
+  <a href="/">Home</a> |
+  <a href="/plans/">My Plans</a> |
+
+  {% if user.is_authenticated %}
+    <span>Welcome {{ user.username }}</span>
+    <a href="/accounts/logout/">Logout</a>
+  {% else %}
+    <a href="/register/">Register</a>
+    <a href="/accounts/login/">Login</a>
+  {% endif %}
+</nav>
+
+<hr>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

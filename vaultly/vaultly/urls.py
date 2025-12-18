@@ -19,5 +19,14 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # HTML pages
+    path('', include('savings.urls')),
+    path('', include('users.urls')),
+
+    # Auth pages (login/logout)
+    path('accounts/', include('django.contrib.auth.urls')),
+
+    # API endpoints
     path('api/', include('savings.urls')),
 ]

@@ -1,15 +1,41 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework import viewsets
-from .models import SavingPlan, Contribution
+from .models import SavingPlan, Contribution, SavingPlan
 from .serializers import SavingPlanSerializer, ContributionSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from .models import SavingPlan, Withdrawal
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
+def home(request):
+    return render(request, 'home.html')
+
+@login_required
+def plans_list(request):
+    plans = SavingPlan.objects.filter(user=request.user)
+    return render(request, 'savings/plans.html', {'plans': plans})
+
+@login_required
+def plan_detail(request, plan_id):
+    plan = SavingPlan.objects.get(id=plan_id, user=request.user)
+
+    if request.method == 'POST':
+        amount = request.POST.get('amount')
+        Contribution.objects.create(
+            saving_plan=plan,
+            amount=amount
+        )
+        return redirect('plan_detail', plan_id=plan.id)
+
+    return render(request, 'savings/plan_detail.html', {'plan': plan})
+
+
+
+
 class SavingPlanViewSet(viewsets.ModelViewSet):
     queryset = SavingPlan.objects.all()
     serializer_class = SavingPlanSerializer

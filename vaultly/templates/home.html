@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Vaultly</h1>
+<p>A simple savings application to help you save with discipline.</p>
+
+{% if user.is_authenticated %}
+  <a href="/plans/">View My Saving Plans</a>
+{% else %}
+  <a href="/register/">Get Started</a>
+{% endif %}
+{% endblock %}

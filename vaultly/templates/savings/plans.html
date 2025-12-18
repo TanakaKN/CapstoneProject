@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>My Saving Plans</h2>
+
+<ul>
+  {% for plan in plans %}
+    <li>
+      <a href="/plans/{{ plan.id }}/">
+        {{ plan.name }} — Saved: {{ plan.total_saved }}
+      </a>
+    </li>
+  {% empty %}
+    <li>No saving plans yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
