@@ -8,6 +8,8 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from .models import SavingPlan, Withdrawal
 from django.contrib.auth.decorators import login_required
+from decimal import Decimal
+from django.contrib import messages
 
 
 # Create your views here.
@@ -59,18 +61,29 @@ def plans_list(request):
 def plan_detail(request, plan_id):
     plan = get_object_or_404(SavingPlan, id=plan_id, user=request.user)
 
-    if request.method == 'POST':
-        if 'amount' in request.POST:
-            Contribution.objects.create(
+    # ADD CONTRIBUTION
+    if request.method == 'POST' and 'amount' in request.POST:
+        Contribution.objects.create(
             saving_plan=plan,
             amount=request.POST.get('amount')
         )
+        return redirect('plan_detail', plan_id=plan.id)
 
-            return redirect('plan_detail', plan_id=plan.id)
-       
-        plan.name = request.POST.get('name', plan.name)
-        plan.target_amount = request.POST.get('target_amount', plan.target_amount)
-        plan.save()
+    # WITHDRAW
+    if request.method == 'POST' and 'withdraw_amount' in request.POST:
+        withdraw_amount = Decimal(request.POST.get('withdraw_amount'))
+        total_saved = plan.total_saved()
+
+        if withdraw_amount <= total_saved:
+            # record withdrawal as negative contribution
+            Contribution.objects.create(
+                saving_plan=plan,
+                amount=-withdraw_amount
+            )
+        else:
+            messages.error(request, "Cannot withdraw more than saved.")
+
+        return redirect('plan_detail', plan_id=plan.id)
 
     contributions = Contribution.objects.filter(saving_plan=plan)
 
