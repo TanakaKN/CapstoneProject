@@ -58,7 +58,7 @@ ROOT_URLCONF = 'vaultly.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,6 +123,7 @@ STATIC_URL = 'static/'
 # Default login/logout redirects
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/accounts/login/'
 
 
 # Default primary key field type
