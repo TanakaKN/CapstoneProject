@@ -33,7 +33,51 @@ def plan_detail(request, plan_id):
 
     return render(request, 'savings/plan_detail.html', {'plan': plan})
 
+@login_required
+def create_plan(request):
+    if request.method == 'POST':
+        SavingPlan.objects.create(
+            user=request.user,
+            name=request.POST.get('name'),
+            target_amount=request.POST.get('target_amount'),
+            start_date=request.POST.get('start_date'),
+            end_date=request.POST.get('end_date'),
+            frequency=request.POST.get('frequency'),
+            target_per_period=request.POST.get('target_per_period'),
+        )
+        return redirect('plans')
 
+    return render(request, 'savings/create_plan.html')
+
+@login_required
+def plans_list(request):
+    plans = SavingPlan.objects.filter(user=request.user)
+    return render(request, 'savings/plans.html', {'plans': plans})
+
+
+@login_required
+def plan_detail(request, plan_id):
+    plan = get_object_or_404(SavingPlan, id=plan_id, user=request.user)
+
+    if request.method == 'POST':
+        if 'amount' in request.POST:
+            Contribution.objects.create(
+            saving_plan=plan,
+            amount=request.POST.get('amount')
+        )
+
+            return redirect('plan_detail', plan_id=plan.id)
+       
+        plan.name = request.POST.get('name', plan.name)
+        plan.target_amount = request.POST.get('target_amount', plan.target_amount)
+        plan.save()
+
+    contributions = Contribution.objects.filter(saving_plan=plan)
+
+    return render(request, 'savings/plan_detail.html', {
+        'plan': plan,
+        'contributions': contributions
+    })
 
 
 class SavingPlanViewSet(viewsets.ModelViewSet):

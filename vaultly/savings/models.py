@@ -12,7 +12,7 @@ class SavingPlan(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='saving_plans')
-    name_of_plan = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     start_date = models.DateField()
     end_date = models.DateField()

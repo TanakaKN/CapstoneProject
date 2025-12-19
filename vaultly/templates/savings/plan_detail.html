@@ -1,27 +1,54 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{ plan.name }}</h2>
+<h2>Plan Details</h2>
 
-<p>Target Amount: {{ plan.target_amount }}</p>
-<p>Total Saved: {{ plan.total_saved }}</p>
+<p><strong>Name:</strong> {{ plan.name }}</p>
+<p><strong>Target:</strong> {{ plan.target_amount }}</p>
+<p><strong>Total Saved:</strong> {{ plan.total_saved }}</p>
 
-<h3>Add Contribution</h3>
+<hr>
+
+<h3>Edit Plan</h3>
 <form method="post">
   {% csrf_token %}
-  <input type="number" step="0.01" name="amount" required>
-  <button type="submit">Add</button>
+  <p>
+    <label>Plan Name</label><br>
+    <input type="text" name="name" value="{{ plan.name }}">
+  </p>
+
+  <p>
+    <label>Target Amount</label><br>
+    <input type="number" step="0.01" name="target_amount" value="{{ plan.target_amount }}">
+  </p>
+
+  <button type="submit">Update Plan</button>
 </form>
 
-<h3>Contributions</h3>
+<hr>
+
+<h3>Add Contribution</h3>
+
+<form method="post">
+  {% csrf_token %}
+  <input type="number" step="0.01" name="amount" placeholder="Amount" required>
+  <button type="submit">Add Money</button>
+</form>
+
+<hr>
+
+<h3>Contribution History</h3>
+
 <ul>
-  {% for c in plan.contributions.all %}
-    <li>{{ c.amount }} — {{ c.created_at }}</li>
+  {% for contribution in contributions %}
+    <li>
+      {{ contribution.amount }} on {{ contribution.created_at|date:"Y-m-d H:i" }}
+    </li>
+  {% empty %}
+    <li>No contributions yet.</li>
   {% endfor %}
 </ul>
+<hr>
 
-<form method="post" action="/api/saving-plans/{{ plan.id }}/withdraw/">
-  {% csrf_token %}
-  <button type="submit">Request Withdrawal</button>
-</form>
+<a href="{% url 'plans' %}">⬅ Back to Plans</a>
 {% endblock %}

@@ -3,10 +3,14 @@
 {% block content %}
 <h2>My Saving Plans</h2>
 
+<p>
+  <a href="{% url 'create_plan' %}">➕ Create New Plan</a>
+</p>
+
 <ul>
   {% for plan in plans %}
     <li>
-      <a href="/plans/{{ plan.id }}/">
+      <a href="{% url 'plan_detail' plan.id %}">
         {{ plan.name }} — Saved: {{ plan.total_saved }}
       </a>
     </li>
